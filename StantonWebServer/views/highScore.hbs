@@ -1,0 +1,20 @@
+<h1>HIGH SCORE PAGE</h1>
+<body>
+    <div id="container">
+        <p>High Scores Ordered Below</p>
+        <script>
+            fetch('/getHighScores').then(function(scores){
+                scores.json().then(function(thescores){
+                    console.log(thescores)
+
+                    for(let score of thescores.myScore){
+                        var scoreElement = document.createElement('p')
+                        scoreElement.innerHTML = score.myName + " : Score : " + score.myScore
+                        document.getElementById('container').appendChild(scoreElement)
+                    }
+                })
+            })
+        </script>
+    </div>
+    <a href="/">Main Page</a>
+</body>

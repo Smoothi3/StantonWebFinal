@@ -1,0 +1,82 @@
+<h1>EDIT PAGE</h1>
+<body>
+    <a href="/">Main Page</a>
+    <br>
+    <br>
+    <select name="verb">
+        <option value="PUT">Update</option>
+        <option value="DELETE">Delete</option>
+    </select>
+    <br>
+    <br>
+    Name <input type="text" name="name" value="">
+    <br>
+    Score <input type="number" name="score" value="">
+    <br>
+    Plays <input type="number" name="plays" value="">
+    <br>
+    <br>
+    <button id="changeButton">Change Value</button>
+    <br>
+    <h2>Results</h2>
+    <input type="text" name="query" readonly size="70">
+    <br>
+    <textarea name="results" readonly></textarea>
+
+    <script>
+        var callBtn = document.getElementById('changeButton')
+        callBtn.addEventListener('click', makeCall)
+
+        function makeCall(){
+            var data = {
+                'myName':document.querySelector('input[name="name"]').value,
+                'myScore':document.querySelector('input[name="score"]').value,
+                'myPlays':document.querySelector('input[name="plays"]').value
+            }
+            console.log(data)
+
+            var postMethod = document.querySelector('select[name="verb"')
+            var pMethod = postMethod.options[postMethod.selectedIndex].value
+
+            var verb = 'POST'
+            var results = document.querySelector('textarea[name="results"]')
+            var url = `http://localhost:3000/${pMethod}`
+
+            console.log("URL " + url)
+            document.querySelector('input[name="query"]').value = url
+
+            var myHeaders = new Headers()
+            myHeaders.set('Content-Type', 'application/json')
+
+            var myInit = {
+                method:verb,
+                headers:myHeaders,
+                mode:'cors',
+                cache:'default'
+            }
+
+            myInit.body = JSON.stringify(data)
+            console.log(myInit)
+
+            var myrequest = new Request(url, myInit)
+            console.log(myrequest)
+
+            fetch(myrequest).then(function(response){
+                console.log(response)
+                var contentType = response.headers.get('content-type')
+
+                if(contentType && contentType.includes('applications/json')){
+                    return response.text()
+                }
+                if(response.status === 204){
+                    return 'Delete'
+                }
+                throw new TypeError("This is not JSON")
+            }).then(function(jsonText){
+                results.value = jsonText
+            }).catch(function(error){
+                console.log(error)
+            })
+        }
+    </script>
+</body>
